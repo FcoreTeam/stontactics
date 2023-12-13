@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  width: 830px;
+  width: 800px;
   overflow: hidden;
 
   .canvas__map {
@@ -68,15 +68,15 @@
     cursor: url("../../img/icons/eraser.svg") 0 40, none;
   }
 
-  &.canvas__drag {
-    // cursor: move;
-  }
+  // &.canvas__drag {
+  //    cursor: move;
+  // }
 }
 
 .map__instruments {
   padding-top: 5px;
   height: 100%;
-  min-width: 57.6px;
+  min-width: 5%;
   background: #101214;
 }
 
@@ -90,7 +90,7 @@
 }
 .other__instruments {
   height: 100%;
-  min-width: 57.6px;
+  min-width: 5%;
   background: #101214;
   padding-top: 5px;
   margin-left: 10px;
@@ -108,7 +108,7 @@
 }
 .drawing__instruments {
   height: 100%;
-  width: 270px;
+  width: 20%;
   background: #101214;
   margin-left: 10px;
 }
@@ -333,4 +333,25 @@
 
 .bomb__wrapper {
   background-color: red;
+}
+@media(max-width: 1200px){
+  .canvas__wrapper{
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .canvas__map{
+      scale: 0.55;
+      // top: 0;
+      // left: 0;
+      // translate: 0;
+    }
+  }
+  .drawing__instruments {
+    width: 250px;
+  }
+  .other__instruments{
+    min-width: 50px;
+  }
 }

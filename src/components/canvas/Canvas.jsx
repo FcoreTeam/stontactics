@@ -83,6 +83,10 @@ const Canvas = () => {
   const [part, setPart] = useState("firstPart");
 
   const [isFullScreen, setIsFullScreen] = useState(null);
+  const [canvasSize, setCanvasSize] = useState({
+    width: 830,
+    height: 570
+  });
 
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([elements]);
@@ -127,6 +131,20 @@ const Canvas = () => {
     setElements(history[currentStep]);
   }, [currentStep]);
 
+  const setCanvasSizes = () => {
+    if (window.innerWidth < 1200) {
+      setCanvasSize({
+        width: 500,
+        height: 404
+      })
+    } else if (window.innerHeight < 1600) {
+      setCanvasSize({
+        width: 830,
+        height: 570
+      })
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
       if (e.shiftKey && e.key === "Shift") {
@@ -143,10 +161,14 @@ const Canvas = () => {
         setIsFullScreen(true);
       } else {
         setIsFullScreen(false);
+        setCanvasSize({width: window.innerWidth, height: window.innerHeight})
+        setCanvasSizes()
       }
     });
     setElements(parts[part]);
+    setCanvasSizes()
   }, []);
+  console.log(elements)
 
   useEffect(() => {
     setElements(parts[part]);
@@ -178,8 +200,8 @@ const Canvas = () => {
           tool,
           id: elements.length,
           name: tool,
-          x: e.target.x(),
-          y: e.target.y(),
+          x: e.target.x() - canvasSize.width / 2,
+          y: e.target.y() - canvasSize.height / 2,
           points: [pos.x, pos.y],
           strokeColor: color[0],
           drawWidth: drawWidth,
@@ -237,8 +259,8 @@ const Canvas = () => {
           isDash: isDash,
           arrowType: arrowType,
           points: {
-            firstX: pos.x,
-            firstY: pos.y,
+            firstX: pos.x - canvasSize.width / 2,
+            firstY: pos.y - canvasSize.height / 2,
           },
           color: color[0],
           pointerLength: 20,
@@ -261,7 +283,7 @@ const Canvas = () => {
 
       setElements(elements.concat());
     } else if (tool === "arrow") {
-      lastLine.points = { ...lastLine.points, lastX: point.x, lastY: point.y };
+      lastLine.points = { ...lastLine.points, lastX: point.x - canvasSize.width / 2, lastY: point.y - canvasSize.height / 2 };
 
       setElements(elements.concat());
     }
@@ -424,8 +446,8 @@ const Canvas = () => {
         playerAttrs: playerAttrs,
         file: elementImages[elementName],
         name: elementName,
-        x: stageRef.current.attrs.width / 2,
-        y: stageRef.current.attrs.height / 2,
+        x: 0,
+        y: 0,
       },
     ];
     setElements(newElements);
@@ -445,8 +467,8 @@ const Canvas = () => {
         tool: "text",
         id: elements.length,
         name: "text",
-        x: 415,
-        y: 285,
+        x: 0,
+        y: 0,
         text: textValue,
         fill: "#e7e7e7",
         width: null,
@@ -530,6 +552,7 @@ const Canvas = () => {
     if (document.fullscreenEnabled) {
       if (!document.fullscreenElement) {
         setIsFullScreen(true);
+        setCanvasSize({width: window.innerWidth, height: screen.height})
         stage.requestFullscreen();
       } else {
         document.exitFullscreen();
@@ -537,6 +560,7 @@ const Canvas = () => {
     } else {
       console.error("Fullscreen not supported by this browser");
     }
+
   };
 
   const getCanvasCapture = () => {
@@ -649,15 +673,15 @@ const Canvas = () => {
                 <Stage
                   pixelRatio={window.devicePixelRatio}
                   ref={stageRef}
-                  width={830}
-                  height={570}
+                  width={canvasSize.width}
+                  height={canvasSize.height}
                   onMouseDown={handleMouseDown}
                   onMousemove={handleMouseMove}
                   onMouseup={handleMouseUp}
                   onMouseLeave={() => (isDrawing.current = false)}
                   // onWheel={handleWheel}
                 >
-                  <Layer antialias={true}>
+                  <Layer x={canvasSize.width / 2} y={canvasSize.height / 2} antialias={true}>
                     {elements.map((element, i) => {
                       if (
                         element.tool === "pencil" ||
@@ -733,26 +757,10 @@ const Canvas = () => {
                             dash={element.isDash ? [7, 7] : false}
                           />
                         );
-                      } else if (element.tool === "image") {
-                        return (
-                          <DrawImage
-                            key={i}
-                            id={element.id}
-                            name={element.name}
-                            level={element.level}
-                            playerAttrs={element.playerAttrs}
-                            x={element.x}
-                            y={element.y}
-                            file={element.file}
-                            draggable={isDragable}
-                            handleObjectDragEnd={handleObjectDragEnd}
-                            onDragMove={(e) => checkOverlap(e)}
-                          />
-                        );
                       }
                     })}
                   </Layer>
-                  <Layer antialias={true}>
+                  <Layer x={canvasSize.width / 2} y={canvasSize.height / 2} antialias={true}>
                     {elements !== null &&
                       elements.map((element, i) => {
                         if (element.tool === "text") {
@@ -774,7 +782,23 @@ const Canvas = () => {
                               selectedTextId={selectedTextId}
                             />
                           );
-                        }
+                        } else if (element.tool === "image") {
+                        return (
+                          <DrawImage
+                            key={i}
+                            id={element.id}
+                            name={element.name}
+                            level={element.level}
+                            playerAttrs={element.playerAttrs}
+                            x={element.x}
+                            y={element.y}
+                            file={element.file}
+                            draggable={isDragable}
+                            handleObjectDragEnd={handleObjectDragEnd}
+                            onDragMove={(e) => checkOverlap(e)}
+                          />
+                        );
+                      }
                       })}
                   </Layer>
                 </Stage>

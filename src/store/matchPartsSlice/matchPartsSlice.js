@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const matchPartsSlice = createSlice({
   name: 'matchParts',
   initialState: {
-    firstPart: ["asd"],
+    firstPart: [],
     secondPart: [],
     thirdPart: [],
     fourthPart: [],

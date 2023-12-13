@@ -1,6 +1,8 @@
 .board {
   background: #181a1e;
-  width: 100%;
+  width: 1220px;
+  margin-left: 10px;
+  margin-right: 10px;
   height: 600px;
   margin-top: 10px;
   display: flex;
@@ -33,4 +35,9 @@
 .canvas {
   background: #101214;
   height: 400px;
+}
+@media(max-width: 1200px){
+  .board{
+    width: 862px;
+  }
 }

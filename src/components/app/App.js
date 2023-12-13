@@ -8,14 +8,14 @@ const App = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    navigate("/strategy")
+    navigate("/stontactics")
   }, [])
 
   return (
     <div className="page">
       <Routes>
         <Route exact path="/" element={<Page />}>
-          <Route path="/strategy" element={<Main />} />
+          <Route path="/stontactics" element={<Main />} />
         </Route>
       </Routes>
     </div>

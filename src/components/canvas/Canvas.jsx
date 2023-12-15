@@ -676,8 +676,11 @@ const Canvas = () => {
                   width={canvasSize.width}
                   height={canvasSize.height}
                   onMouseDown={handleMouseDown}
-                  onMousemove={handleMouseMove}
-                  onMouseup={handleMouseUp}
+                  onTouchStart={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onTouchMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onTouchEnd={handleMouseUp}
                   onMouseLeave={() => (isDrawing.current = false)}
                   // onWheel={handleWheel}
                 >

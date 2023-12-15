@@ -335,11 +335,15 @@
   background-color: red;
 }
 @media(max-width: 1200px){
+  // .konvajs-content > canvas {
+  //   scale: .75 !important;
+  // }
   .canvas__wrapper{
     width: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
+  
 
     .canvas__map{
       scale: 0.55;

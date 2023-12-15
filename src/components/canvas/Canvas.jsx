@@ -85,7 +85,8 @@ const Canvas = () => {
   const [isFullScreen, setIsFullScreen] = useState(null);
   const [canvasSize, setCanvasSize] = useState({
     width: 830,
-    height: 570
+    height: 570,
+    scale: 1
   });
 
   const [elements, setElements] = useState([]);
@@ -135,13 +136,15 @@ const Canvas = () => {
     if (window.innerWidth < 1200) {
       setCanvasSize({
         width: 500,
-        height: 404
+        height: 404,
       })
+      stageRef.current.container().style.scale = "0.75"
     } else if (window.innerHeight < 1600) {
       setCanvasSize({
         width: 830,
-        height: 570
+        height: 570,
       })
+      stageRef.current.container().style.scale = "1"
     }
   }
 
@@ -156,9 +159,14 @@ const Canvas = () => {
         setShiftPressed(false);
       }
     });
+    window.addEventListener('resize', () => {
+      setCanvasSizes()
+    });
     document.addEventListener("fullscreenchange", () => {
       if (document.fullscreenElement) {
         setIsFullScreen(true);
+        setTool(null)
+        setIsDragable(false)
       } else {
         setIsFullScreen(false);
         setCanvasSize({width: window.innerWidth, height: window.innerHeight})
@@ -168,8 +176,7 @@ const Canvas = () => {
     setElements(parts[part]);
     setCanvasSizes()
   }, []);
-  console.log(elements)
-
+  
   useEffect(() => {
     setElements(parts[part]);
   }, [part]);
@@ -177,8 +184,12 @@ const Canvas = () => {
   useEffect(() => {
     if (!!tool) {
       setIsDragable(false);
+      document.body.style.overflow = "hidden";
+    } else if (!tool) {
+      document.body.style.overflow = "visible";
     }
   }, [tool]);
+  console.log(elements)
 
   const handleMouseDown = (e) => {
     const clickedOnEmpty = e.target === e.target.getStage();

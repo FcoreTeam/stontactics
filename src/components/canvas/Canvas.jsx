@@ -36,6 +36,7 @@ import brushThree from "../../img/icons/BrushThree.svg";
 import brushFour from "../../img/icons/brushFour.svg";
 import brushFive from "../../img/icons/brushFive.svg";
 import brushSix from "../../img/icons/brushSix.svg";
+import points from "../../img/icons/points.svg"
 
 import personOneYellow from "../../img/icons/person_1_yellow.svg";
 import personTwoYellow from "../../img/icons/person_2_yellow.svg";
@@ -86,7 +87,7 @@ const Canvas = () => {
   const [canvasSize, setCanvasSize] = useState({
     width: 830,
     height: 570,
-    scale: 1
+    scale: 1,
   });
 
   const [elements, setElements] = useState([]);
@@ -134,19 +135,19 @@ const Canvas = () => {
 
   const setCanvasSizes = () => {
     if (window.innerWidth < 1200) {
-      setCanvasSize({
-        width: 500,
-        height: 404,
-      })
-      stageRef.current.container().style.scale = "0.75"
+      // setCanvasSize({
+      //   width: 500,
+      //   height: 404,
+      // })
+      // stageRef.current.container().style.scale = "0.75"
     } else if (window.innerHeight < 1600) {
-      setCanvasSize({
-        width: 830,
-        height: 570,
-      })
-      stageRef.current.container().style.scale = "1"
+      // setCanvasSize({
+      //   width: 830,
+      //   height: 570,
+      // })
+      // stageRef.current.container().style.scale = "1"
     }
-  }
+  };
 
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
@@ -159,24 +160,24 @@ const Canvas = () => {
         setShiftPressed(false);
       }
     });
-    window.addEventListener('resize', () => {
-      setCanvasSizes()
-    });
+    // window.addEventListener('resize', () => {
+    //   setCanvasSizes()
+    // });
     document.addEventListener("fullscreenchange", () => {
       if (document.fullscreenElement) {
         setIsFullScreen(true);
-        setTool(null)
-        setIsDragable(false)
+        setTool(null);
+        setIsDragable(false);
       } else {
         setIsFullScreen(false);
-        setCanvasSize({width: window.innerWidth, height: window.innerHeight})
-        setCanvasSizes()
+        setCanvasSize({ width: 830, height: 570 });
+        setCanvasSizes();
       }
     });
     setElements(parts[part]);
-    setCanvasSizes()
+    setCanvasSizes();
   }, []);
-  
+
   useEffect(() => {
     setElements(parts[part]);
   }, [part]);
@@ -189,7 +190,7 @@ const Canvas = () => {
       document.body.style.overflow = "visible";
     }
   }, [tool]);
-  console.log(elements)
+  console.log(elements);
 
   const handleMouseDown = (e) => {
     const clickedOnEmpty = e.target === e.target.getStage();
@@ -294,7 +295,11 @@ const Canvas = () => {
 
       setElements(elements.concat());
     } else if (tool === "arrow") {
-      lastLine.points = { ...lastLine.points, lastX: point.x - canvasSize.width / 2, lastY: point.y - canvasSize.height / 2 };
+      lastLine.points = {
+        ...lastLine.points,
+        lastX: point.x - canvasSize.width / 2,
+        lastY: point.y - canvasSize.height / 2,
+      };
 
       setElements(elements.concat());
     }
@@ -489,8 +494,8 @@ const Canvas = () => {
     ]);
     setHistory(newHistory);
     setCurrentStep(newHistory.length - 1);
-    setShowTextInput(false)
-    setTextValue("")
+    setShowTextInput(false);
+    setTextValue("");
   };
 
   const deleteAll = () => {
@@ -563,7 +568,7 @@ const Canvas = () => {
     if (document.fullscreenEnabled) {
       if (!document.fullscreenElement) {
         setIsFullScreen(true);
-        setCanvasSize({width: window.innerWidth, height: screen.height})
+        setCanvasSize({ width: window.innerWidth, height: screen.height });
         stage.requestFullscreen();
       } else {
         document.exitFullscreen();
@@ -571,7 +576,6 @@ const Canvas = () => {
     } else {
       console.error("Fullscreen not supported by this browser");
     }
-
   };
 
   const getCanvasCapture = () => {
@@ -582,7 +586,11 @@ const Canvas = () => {
     console.log(dataURL);
   };
 
-  // const handleWheel = (e) => {
+   const showDrawingMenu = () => {
+    let mapInstruments = document.querySelector('.map__instruments')
+    mapInstruments.classList.add('show')
+   }
+  // const handleWheel = (e)  => {
   //   e.evt.preventDefault();
 
   //   const stage = e.target.getStage();
@@ -613,6 +621,56 @@ const Canvas = () => {
 
   return (
     <>
+     <div className={styles.buttons__mobile}>
+     <div className={`${styles.grenades} ${styles.grenades__mobile}`}>
+            <Button
+              secondClass={styles.player__button}
+              ico={flashbang}
+              onClick={() => addElement("flashbang")}
+            />
+            <Button
+              secondClass={styles.player__button}
+              ico={smoke}
+              onClick={() => addElement("smoke")}
+            />
+            <Button
+              secondClass={styles.player__button}
+              ico={grenade}
+              onClick={() => addElement("grenade")}
+            />
+            <Button
+              secondClass={styles.player__button}
+              ico={molotov}
+              onClick={() => addElement("molotov")}
+            />
+          </div>
+          <div className={styles.other__buttons}>
+           <Button ico={fullScreen} onClick={handleFullscreen} />
+           <Button
+                ico={back}
+                className={styles.mobile__disabled}
+                onClick={handleUndo}
+                secondClass={currentStep === 0 && "disabled"}
+              />
+              <Button
+                ico={forward}
+                onClick={handleRedo}
+                secondClass={currentStep === history.length - 1 && "disabled"}
+              />
+              <button
+                ref={removeBtnRef}
+                className={clsx(
+                  buttonStyles.setting__button,
+                  buttonStyles[elements.length === 0 && "disabled"]
+                )}
+                onClick={deleteAll}
+              >
+                <img src={trash} alt="" />
+              </button>
+              <Button ico={folder} onClick={getCanvasCapture} />
+              <Button ico={points} onClick={showDrawingMenu}></Button>
+          </div>
+     </div>
       <div className={styles.parent__canvas}>
         <div className={styles.parent}>
           <section className={styles.map__instruments}>
@@ -635,7 +693,7 @@ const Canvas = () => {
               />
               <Button
                 ico={dialog}
-                onClick={() => setShowTextInput(prev => !prev)}
+                onClick={() => setShowTextInput((prev) => !prev)}
                 secondClass={tool === "text" && "active"}
               />
               <Button ico={image} />
@@ -657,167 +715,190 @@ const Canvas = () => {
               <Button ico={clock} />
             </div>
           </section>
-          <section
-            ref={canvasWrapperRef}
-            className={clsx(
-              styles.canvas__wrapper,
-              isDragable && styles.drag__element,
-              (tool === "pencil" || tool === "arrow") && styles.pencil,
-              tool === "eraser" && styles.eraser,
-              !tool && styles.canvas__drag
-            )}
-          >
-            {showTextInput && <div className={styles.text__input}>
-              <div className={styles.text__input_container}>
-                <input type="text" required placeholder="type.." value={textValue} onChange={(e) => setTextValue(e.target.value)} />
-                <button onClick={addText}>Add</button>
-              </div>
-            </div>}
-            <TransformWrapper
-              disabled={tool || isDragable || !!selectedTextId}
-              wheel={{ disabled: !shiftPressed }}
+          <section className={styles.canvas__wrapper_wrapper}>
+            <div
+              ref={canvasWrapperRef}
+              className={clsx(
+                styles.canvas__wrapper,
+                isDragable && styles.drag__element,
+                (tool === "pencil" || tool === "arrow") && styles.pencil,
+                tool === "eraser" && styles.eraser,
+                !tool && styles.canvas__drag
+              )}
             >
-              <TransformComponent
+              {showTextInput && (
+                <div className={styles.text__input}>
+                  <div className={styles.text__input_container}>
+                    <input
+                      type="text"
+                      required
+                      placeholder="type.."
+                      value={textValue}
+                      onChange={(e) => setTextValue(e.target.value)}
+                    />
+                    <button onClick={addText}>Add</button>
+                  </div>
+                </div>
+              )}
+              <TransformWrapper
                 disabled={tool || isDragable || !!selectedTextId}
+                wheel={{ disabled: !shiftPressed }}
               >
-                <Map mapName={selectedMap} />
-                <Stage
-                  pixelRatio={window.devicePixelRatio}
-                  ref={stageRef}
-                  width={canvasSize.width}
-                  height={canvasSize.height}
-                  onMouseDown={handleMouseDown}
-                  onTouchStart={handleMouseDown}
-                  onMouseMove={handleMouseMove}
-                  onTouchMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onTouchEnd={handleMouseUp}
-                  onMouseLeave={() => (isDrawing.current = false)}
-                  // onWheel={handleWheel}
+                <TransformComponent
+                  disabled={tool || isDragable || !!selectedTextId}
                 >
-                  <Layer x={canvasSize.width / 2} y={canvasSize.height / 2} antialias={true}>
-                    {elements.map((element, i) => {
-                      if (
-                        element.tool === "pencil" ||
-                        element.tool === "eraser"
-                      ) {
-                        const attrs = {
-                          key: i,
-                          id: String(element.id),
-                          x: element.x,
-                          y: element.y,
-                          points: element.points,
-                          stroke: element.strokeColor,
-                          strokeWidth: element.tool === "eraser" ? 16 : element.drawWidth,
-                          tension: 0.1,
-                          lineCap: "round",
-                          lineJoin: "round",
-                          globalCompositeOperation:
-                            element.tool === "eraser"
-                              ? "destination-out"
-                              : "source-over",
-                          pointerAtEnding: true,
-                          pointerLength: element.pointerLength,
-                          pointerWidth: element.pointerWidth,
-                        };
+                  <Map mapName={selectedMap} />
+                  <Stage
+                    pixelRatio={window.devicePixelRatio}
+                    ref={stageRef}
+                    width={canvasSize.width}
+                    height={canvasSize.height}
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onTouchMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onTouchEnd={handleMouseUp}
+                    onMouseLeave={() => (isDrawing.current = false)}
+                    // onWheel={handleWheel}
+                  >
+                    <Layer
+                      x={canvasSize.width / 2}
+                      y={canvasSize.height / 2}
+                      antialias={true}
+                    >
+                      {elements.map((element, i) => {
+                        if (
+                          element.tool === "pencil" ||
+                          element.tool === "eraser"
+                        ) {
+                          const attrs = {
+                            key: i,
+                            id: String(element.id),
+                            x: element.x,
+                            y: element.y,
+                            points: element.points,
+                            stroke: element.strokeColor,
+                            strokeWidth:
+                              element.tool === "eraser"
+                                ? 16
+                                : element.drawWidth,
+                            tension: 0.1,
+                            lineCap: "round",
+                            lineJoin: "round",
+                            globalCompositeOperation:
+                              element.tool === "eraser"
+                                ? "destination-out"
+                                : "source-over",
+                            pointerAtEnding: true,
+                            pointerLength: element.pointerLength,
+                            pointerWidth: element.pointerWidth,
+                            scaleY: stageRef.current.width() / 830,
+                            scaleX: stageRef.current.width() / 830,
+                          };
 
-                        return element.arrowType === "pointer-stroke" ? (
-                          <Shape
-                            {...attrs}
-                            sceneFunc={sceneFunc}
-                            dash={element.dash ? [18, 10] : false}
-                          />
-                        ) : (
-                          <Line
-                            {...attrs}
-                            perfectDrawEnabled={true}
-                            dash={element.dash ? [7, 7] : false}
-                          />
-                        );
-                      } else if (element.tool === "arrow") {
-                        if (!element.points.lastX || !element.points.lastY) {
-                          return;
-                        }
-
-                        const attrs = {
-                          key: i,
-                          id: element.id,
-                          points: [
-                            element.points.firstX,
-                            element.points.firstY,
-                            element.points.lastX,
-                            element.points.lastY,
-                          ],
-                          fill: element.color,
-                          stroke: element.color,
-                          strokeWidth: element.drawWidth,
-                          pointerLength: element.pointerLength,
-                          pointerWidth: element.pointerWidth,
-                          lineCap: "round",
-                        };
-
-                        return element.arrowType === "pointer-stroke" ? (
-                          <Shape
-                            {...attrs}
-                            sceneFunc={sceneFunc}
-                            dash={element.isDash ? [18, 10] : false}
-                          />
-                        ) : (
-                          <Arrow
-                            {...attrs}
-                            pointerAtEnding={
-                              !(element.arrowType === "no-pointer")
-                            }
-                            dash={element.isDash ? [7, 7] : false}
-                          />
-                        );
-                      }
-                    })}
-                  </Layer>
-                  <Layer x={canvasSize.width / 2} y={canvasSize.height / 2} antialias={true}>
-                    {elements !== null &&
-                      elements.map((element, i) => {
-                        if (element.tool === "text") {
-                          return (
-                            <DrawText
-                              element={element}
-                              id={element.id}
-                              i={i}
-                              isDragable={isDragable}
-                              elements={elements}
-                              setElements={setElements}
-                              handleObjectDragEnd={handleObjectDragEnd}
-                              setSelectedTextId={(id) => {
-                                if (tool) {
-                                  return;
-                                }
-                                setSelectedTextId(id);
-                              }}
-                              selectedTextId={selectedTextId}
+                          return element.arrowType === "pointer-stroke" ? (
+                            <Shape
+                              {...attrs}
+                              sceneFunc={sceneFunc}
+                              dash={element.dash ? [18, 10] : false}
+                            />
+                          ) : (
+                            <Line
+                              {...attrs}
+                              perfectDrawEnabled={true}
+                              dash={element.dash ? [7, 7] : false}
                             />
                           );
-                        } else if (element.tool === "image") {
-                        return (
-                          <DrawImage
-                            key={i}
-                            id={element.id}
-                            name={element.name}
-                            level={element.level}
-                            playerAttrs={element.playerAttrs}
-                            x={element.x}
-                            y={element.y}
-                            file={element.file}
-                            draggable={isDragable}
-                            handleObjectDragEnd={handleObjectDragEnd}
-                            onDragMove={(e) => checkOverlap(e)}
-                          />
-                        );
-                      }
+                        } else if (element.tool === "arrow") {
+                          if (!element.points.lastX || !element.points.lastY) {
+                            return;
+                          }
+
+                          const attrs = {
+                            key: i,
+                            id: element.id,
+                            points: [
+                              element.points.firstX,
+                              element.points.firstY,
+                              element.points.lastX,
+                              element.points.lastY,
+                            ],
+                            fill: element.color,
+                            stroke: element.color,
+                            strokeWidth: element.drawWidth,
+                            pointerLength: element.pointerLength,
+                            pointerWidth: element.pointerWidth,
+                            lineCap: "round",
+                          };
+
+                          return element.arrowType === "pointer-stroke" ? (
+                            <Shape
+                              {...attrs}
+                              sceneFunc={sceneFunc}
+                              dash={element.isDash ? [18, 10] : false}
+                            />
+                          ) : (
+                            <Arrow
+                              {...attrs}
+                              pointerAtEnding={
+                                !(element.arrowType === "no-pointer")
+                              }
+                              dash={element.isDash ? [7, 7] : false}
+                            />
+                          );
+                        }
                       })}
-                  </Layer>
-                </Stage>
-              </TransformComponent>
-            </TransformWrapper>
+                    </Layer>
+                    <Layer
+                      x={canvasSize.width / 2}
+                      y={canvasSize.height / 2}
+                      antialias={true}
+                    >
+                      {elements !== null &&
+                        elements.map((element, i) => {
+                          if (element.tool === "text") {
+                            return (
+                              <DrawText
+                                element={element}
+                                id={element.id}
+                                i={i}
+                                isDragable={isDragable}
+                                elements={elements}
+                                setElements={setElements}
+                                handleObjectDragEnd={handleObjectDragEnd}
+                                setSelectedTextId={(id) => {
+                                  if (tool) {
+                                    return;
+                                  }
+                                  setSelectedTextId(id);
+                                }}
+                                selectedTextId={selectedTextId}
+                              />
+                            );
+                          } else if (element.tool === "image") {
+                            return (
+                              <DrawImage
+                                key={i}
+                                id={element.id}
+                                name={element.name}
+                                level={element.level}
+                                playerAttrs={element.playerAttrs}
+                                x={element.x}
+                                y={element.y}
+                                file={element.file}
+                                draggable={isDragable}
+                                handleObjectDragEnd={handleObjectDragEnd}
+                                onDragMove={(e) => checkOverlap(e)}
+                              />
+                            );
+                          }
+                        })}
+                    </Layer>
+                  </Stage>
+                </TransformComponent>
+              </TransformWrapper>
+            </div>
           </section>
           <section className={styles.other__instruments}>
             <div className={styles.other__wrap}>
@@ -1158,7 +1239,7 @@ const Canvas = () => {
               onClick={() => addElement("player", { pos: 4, color: "yellow" })}
             />
           </div>
-          <div className={styles.grenades}>
+          <div className={`${styles.grenades} ${styles.grenades__pc}`}>
             <Button
               secondClass={styles.player__button}
               ico={flashbang}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Image } from "react-konva";
-import { useImage, Html } from "react-konva-utils";
+import { useImage } from "react-konva-utils";
 
 import kt_1_u from "../../img/icons/KT_1_up.svg";
 import kt_1_d from "../../img/icons/KT_1_down.svg";
